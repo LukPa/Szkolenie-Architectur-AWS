@@ -1,0 +1,72 @@
+Tworzenie CLI EC2
+
+# Set the Region
+AZ=`curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
+export AWS_DEFAULT_REGION=${AZ::-1}
+
+# Obtain latest Linux AMI
+AMI=$(aws ssm get-parameters --names /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 --query 'Parameters[0].[Value]' --output text)
+
+echo $AMI
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+SUBNET=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=LabPublicSubnet' --query Subnets[].SubnetId --output text)
+
+echo $SUBNET
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SG=$(aws ec2 describe-security-groups --filters Name=tag:Name,Values=LabInstanceSecurityGroup --query SecurityGroups[].GroupId --output text)
+
+echo $SG
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+cd ~
+wget https://us-west-2-tcprod.s3.amazonaws.com/courses/ILT-TF-200-ARCHIT/v7.1.1/lab-1-EC2/scripts/UserDataInstanceB.txt
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+cat UserDataInstanceB.txt
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSTANCE=$(\
+aws ec2 run-instances \
+--image-id $AMI \
+--subnet-id $SUBNET \
+--security-group-ids $SG \
+--user-data file://./UserDataInstanceB.txt \
+--instance-type t3.micro \
+--tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=InstanceB}]' \
+--query 'Instances[*].InstanceId' \
+--output text \
+)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+echo $INSTANCE
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+aws ec2 describe-instances --instance-ids $INSTANCE
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+aws ec2 describe-instances --instance-ids $INSTANCE --query 'Reservations[].Instances[].State.Name' --output text
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+aws ec2 describe-instances --instance-ids $INSTANCE --query Reservations[].Instances[].PublicDnsName --output text
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Sprawdzanie polityk uprawnien uytkonikow
+
+https://policysim.aws.amazon.com/home/index.jsp
+

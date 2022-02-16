@@ -1,5 +1,12 @@
 1. Dokumentacja AWS Architektury
     *well-architected -> https://aws.amazon.com/architecture/well-architected/?wa-lens-whitepapers.sort-by=item.additionalFields.sortDate&wa-lens-whitepapers.sort-order=desc
     *well-architected-tool -> https://aws.amazon.com/well-architected-tool/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc
-    
-    
+
+2. Tworzenie serwera:
+    *CLI - ami-09d5dd12541e69077
+    *CLI - subnet-085c320e713966588
+    *CLI - sg-0c9c92ae4a23a7b09
+    *CLI - i-004253cefe9b67ed9
+    *CLI - ec2-52-18-162-18.eu-west-1.compute.amazonaws.com
+
+3. VPC
